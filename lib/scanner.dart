@@ -38,10 +38,17 @@ class _ScannerWidgetState extends State<ScannerWidget>
                   // fit: BoxFit.contain,
                   // QRコードかバーコードが見つかった後すぐ実行する関数
                   onDetect: (scandata) {
+
+                    // もしQRコードが見つかったら何もしない
+                    BarcodeFormat codeFormat = scandata.barcodes.first.format;
+                    if (codeFormat == BarcodeFormat.qrCode) {
+                      return;
+                    }
+
                     setState(() {
                       controller.stop(); // まずはカメラを止める
                       // 結果を表す画面に切り替える
-                      Navigator.of(context).pushReplacement(
+                      Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
                             // scandataはスキャンの結果を収める関数であり、これをデータ表示ページに渡す
