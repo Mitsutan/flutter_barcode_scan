@@ -30,27 +30,6 @@ class ScanDataWidget extends StatelessWidget {
           dynamic cardSubtitle = Text(codeValue,
               style: const TextStyle(fontSize: 23, color: Color(0xFF553311)));
 
-          // タイプがURLである場合
-          if (codeType == BarcodeType.url) {
-            cardTitle = 'どこかのURL';
-            cardSubtitle = InkWell(
-              child: Text(
-                codeValue,
-                style: const TextStyle(
-                  fontSize: 23,
-                  color: Color(0xFF1133DD), // 藍色の文字
-                  decoration: TextDecoration.underline, // 下線
-                  decorationColor: Color(0xFF1133DD), // 下線の色
-                ),
-              ),
-              // 押したらウェブサイトに入る
-              // onTap: () async {
-              //   if (await canLaunchUrlString(codeValue)) {
-              //     await launchUrlString(codeValue);
-              //   }
-              // },
-            );
-          }
           return Card(
             elevation: 5,
             margin: const EdgeInsets.all(9),
