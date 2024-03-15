@@ -101,12 +101,13 @@ class ScanDataWidget extends StatelessWidget {
               } else if (snapshot.hasError) {
                 // return Text('エラー: ${snapshot.error}');
                 cardTitle = 'エラー';
-                cardSubtitle = '${snapshot.error}';
+                // cardSubtitle = '${snapshot.error}';
+                cardSubtitle = 'ISBN:$codeValueは登録されていないようです。';
               } else {
                 cardTitle = snapshot.data?['onix']['DescriptiveDetail']
                     ['TitleDetail']['TitleElement']['TitleText']['content'];
-                cardSubtitle = snapshot.data?['onix']['ProductSupply']
-                    ['SupplyDetail']['Price'][0]['PriceAmount'];
+                cardSubtitle =
+                    '￥${snapshot.data?['onix']['ProductSupply']['SupplyDetail']['Price'][0]['PriceAmount']}';
               }
               return Card(
                 elevation: 5,
@@ -115,12 +116,12 @@ class ScanDataWidget extends StatelessWidget {
                   title: Text(
                     cardTitle,
                     style: const TextStyle(
-                        fontSize: 26, fontWeight: FontWeight.bold),
+                        fontSize: 23, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     cardSubtitle,
                     style:
-                        const TextStyle(fontSize: 23, color: Color(0xFF553311)),
+                        const TextStyle(fontSize: 20, color: Color(0xFF553311)),
                   ),
                 ),
               );
