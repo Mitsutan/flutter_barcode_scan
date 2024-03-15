@@ -34,18 +34,29 @@ class _ScannerWidgetState extends State<ScannerWidget>
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.5,
                 child: MobileScanner(
+                  // controller: MobileScannerController(
+                    // detectionSpeed: DetectionSpeed.noDuplicates,
+                    // autoStart: true,
+                    
+                  // ),
                   controller: controller,
                   // fit: BoxFit.contain,
                   // QRコードかバーコードが見つかった後すぐ実行する関数
                   onDetect: (scandata) {
-                    // もしQRコードが見つかったら何もしない
-                    BarcodeFormat codeFormat = scandata.barcodes.first.format;
-                    if (codeFormat == BarcodeFormat.qrCode) {
+
+                    // QRコードとバーコードタイプがISBNでないものを削除する
+                    scandata.barcodes.removeWhere(
+                        (barcode) => barcode.format == BarcodeFormat.qrCode || barcode.type != BarcodeType.isbn);
+
+                    // 上記の処理でバーコードがなくなったら何もしない
+                    if (scandata.barcodes.isEmpty) {
+                      // controller.start();
                       return;
                     }
 
+                    controller.stop(); // まずはカメラを止める
+
                     setState(() {
-                      controller.stop(); // まずはカメラを止める
                       // 結果を表す画面に切り替える
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -54,7 +65,10 @@ class _ScannerWidgetState extends State<ScannerWidget>
                             return ScanDataWidget(scandata: scandata);
                           },
                         ),
-                      ).then((value) => controller.start());
+                      )
+                      .then(
+                        (value) => controller.start()
+                        );
                     });
                   },
                 ),
