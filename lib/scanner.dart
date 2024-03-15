@@ -38,7 +38,6 @@ class _ScannerWidgetState extends State<ScannerWidget>
                   // fit: BoxFit.contain,
                   // QRコードかバーコードが見つかった後すぐ実行する関数
                   onDetect: (scandata) {
-
                     // もしQRコードが見つかったら何もしない
                     BarcodeFormat codeFormat = scandata.barcodes.first.format;
                     if (codeFormat == BarcodeFormat.qrCode) {
@@ -55,7 +54,7 @@ class _ScannerWidgetState extends State<ScannerWidget>
                             return ScanDataWidget(scandata: scandata);
                           },
                         ),
-                      );
+                      ).then((value) => controller.start());
                     });
                   },
                 ),
@@ -106,8 +105,8 @@ class _ScannerWidgetState extends State<ScannerWidget>
                     color: const Color(0xFFBBDDFF),
                     // オン／オフの状態によって表示するアイコンが変わる
                     icon: isStarted
-                        ? const Icon(Icons.stop) // ストップのアイコン
-                        : const Icon(Icons.play_arrow), // プレイのアイコン
+                        ? const Icon(Icons.videocam_off_outlined) // ストップのアイコン
+                        : const Icon(Icons.videocam_outlined), // プレイのアイコン
                     iconSize: 50,
                     // ボタンが押されたらオン／オフを実行する
                     onPressed: () => setState(() {
