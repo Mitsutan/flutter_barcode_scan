@@ -19,7 +19,7 @@ class _ScanDataWidget extends State<ScanDataWidget> {
   //   super.key,
   //   this.scandata,
   // });
-  
+
   List<bool> isSwitched = List.empty(growable: true);
   List<Future<Map<String, dynamic>>> dataFuture = List.empty(growable: true);
 
@@ -60,6 +60,7 @@ class _ScanDataWidget extends State<ScanDataWidget> {
             builder: (context, snapshot) {
               String cardTitle = '';
               String cardSubtitle = '';
+              bool isSwitchDisabled = false;
               isSwitched.add(true);
               if (snapshot.connectionState == ConnectionState.waiting) {
                 // return const CircularProgressIndicator();
@@ -70,6 +71,7 @@ class _ScanDataWidget extends State<ScanDataWidget> {
                 cardTitle = 'エラー';
                 // cardSubtitle = '${snapshot.error}';
                 cardSubtitle = 'ISBN:$codeValueは登録されていないようです。';
+                isSwitchDisabled = true;
               } else {
                 cardTitle = snapshot.data?['onix']['DescriptiveDetail']
                     ['TitleDetail']['TitleElement']['TitleText']['content'];
@@ -99,12 +101,15 @@ class _ScanDataWidget extends State<ScanDataWidget> {
                 // ),
                 child: SwitchListTile(
                   value: isSwitched[index],
-                  onChanged: (bool value) {
-                    setState(() {
-                      isSwitched[index] = value;
-                    });
-                    print('「${cardTitle}」is ${isSwitched[index]}');
-                  },
+                  onChanged: (isSwitchDisabled)
+                      ? null
+                      : (bool value) {
+                          setState(() {
+                            isSwitched[index] = value;
+                          });
+                          print('「${cardTitle}」is ${isSwitched[index]}');
+                        },
+                  // onChanged: null,
                   title: Text(
                     cardTitle,
                     style: const TextStyle(
