@@ -70,7 +70,7 @@ class _ScanDataWidget extends State<ScanDataWidget> {
                 // return Text('エラー: ${snapshot.error}');
                 cardTitle = 'エラー';
                 // cardSubtitle = '${snapshot.error}';
-                cardSubtitle = 'ISBN:$codeValueは登録されていないようです。';
+                cardSubtitle = 'ISBN:$codeValueの情報は取得できませんでした。';
                 isSwitchDisabled = true;
               } else {
                 cardTitle = snapshot.data?['onix']['DescriptiveDetail']
