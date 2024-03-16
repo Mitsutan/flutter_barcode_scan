@@ -3,12 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:http/http.dart' as http;
 
-class ScanDataWidget extends StatelessWidget {
+class ScanDataWidget extends StatefulWidget {
   final BarcodeCapture? scandata; // スキャナーのページから渡されたデータ
-  const ScanDataWidget({
-    super.key,
-    this.scandata,
-  });
+  const ScanDataWidget({super.key, this.scandata});
+
+  // const ScannerWidget({Key? key});
+
+  @override
+  State<StatefulWidget> createState() => _ScanDataWidget();
+}
+
+class _ScanDataWidget extends State<ScanDataWidget> {
+  // final BarcodeCapture? scandata; // スキャナーのページから渡されたデータ
+  // const ScanDataWidget({
+  //   super.key,
+  //   this.scandata,
+  // });
+  
+  List<bool> isSwitched = List.empty(growable: true);
+  List<Future<Map<String, dynamic>>> dataFuture = List.empty(growable: true);
+
+  @override
+  void initState() {
+    super.initState();
+    widget.scandata?.barcodes.forEach((barcode) {
+      dataFuture.add(getData(barcode.rawValue!));
+    });
+  }
 
   Future<Map<String, dynamic>> getData(String isbn) async {
     var response =
@@ -26,18 +47,20 @@ class ScanDataWidget extends StatelessWidget {
       ),
       // 検出されたコードの数だけリストを作る
       body: ListView.builder(
-        itemCount: scandata?.barcodes.length ?? 0,
+        itemCount: widget.scandata?.barcodes.length ?? 0,
 
         // ListView.builder内
         itemBuilder: (context, index) {
-          String codeValue = scandata?.barcodes[index].rawValue ?? 'null';
+          String codeValue =
+              widget.scandata?.barcodes[index].rawValue ?? 'null';
 
           // FutureBuilderを使用して非同期データを処理
           return FutureBuilder(
-            future: getData(codeValue),
+            future: dataFuture[index],
             builder: (context, snapshot) {
               String cardTitle = '';
               String cardSubtitle = '';
+              isSwitched.add(true);
               if (snapshot.connectionState == ConnectionState.waiting) {
                 // return const CircularProgressIndicator();
                 cardTitle = '読み込み中';
@@ -56,7 +79,32 @@ class ScanDataWidget extends StatelessWidget {
               return Card(
                 elevation: 5,
                 margin: const EdgeInsets.all(9),
-                child: ListTile(
+                // child: ListTile(
+                //   title: Text(
+                //     cardTitle,
+                //     style: const TextStyle(
+                //         fontSize: 23, fontWeight: FontWeight.bold),
+                //   ),
+                //   subtitle: Text(
+                //     cardSubtitle,
+                //     style:
+                //         const TextStyle(fontSize: 20, color: Color(0xFF553311)),
+                //   ),
+                //   trailing: IconButton(
+                //     icon: const Icon(Icons.more_vert), // ここに任意のアイコンを設定
+                //     onPressed: () {
+                //       // ボタンが押されたときの処理をここに書く
+                //     },
+                //   ),
+                // ),
+                child: SwitchListTile(
+                  value: isSwitched[index],
+                  onChanged: (bool value) {
+                    setState(() {
+                      isSwitched[index] = value;
+                    });
+                    print('「${cardTitle}」is ${isSwitched[index]}');
+                  },
                   title: Text(
                     cardTitle,
                     style: const TextStyle(
