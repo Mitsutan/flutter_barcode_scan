@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:http/http.dart' as http;
@@ -72,6 +73,7 @@ class _ScanDataWidget extends State<ScanDataWidget> {
                 // cardSubtitle = '${snapshot.error}';
                 cardSubtitle = 'ISBN:$codeValueの情報は取得できませんでした。';
                 isSwitchDisabled = true;
+                log('apiエラー', error: snapshot.error);
               } else {
                 cardTitle = snapshot.data?['onix']['DescriptiveDetail']
                     ['TitleDetail']['TitleElement']['TitleText']['content'];
@@ -107,9 +109,8 @@ class _ScanDataWidget extends State<ScanDataWidget> {
                           setState(() {
                             isSwitched[index] = value;
                           });
-                          print('「${cardTitle}」is ${isSwitched[index]}');
+                          log('「$cardTitle」is ${isSwitched[index]}');
                         },
-                  // onChanged: null,
                   title: Text(
                     cardTitle,
                     style: const TextStyle(
