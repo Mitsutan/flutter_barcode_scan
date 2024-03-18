@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scan/scanner.dart';
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 
 void main() {
@@ -113,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         return const CircularProgressIndicator();
                       }
                       return Text(
-                        '¥${snapshot.data}',
+                        NumberFormat.simpleCurrency(locale: 'ja_JP', name: 'JPY').format(snapshot.data),
                         style: const TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
