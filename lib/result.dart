@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
@@ -16,12 +17,6 @@ class ScanDataWidget extends StatefulWidget {
 }
 
 class _ScanDataWidget extends State<ScanDataWidget> {
-  // final BarcodeCapture? scandata; // スキャナーのページから渡されたデータ
-  // const ScanDataWidget({
-  //   super.key,
-  //   this.scandata,
-  // });
-
   List<bool> isSwitched = List.empty(growable: true);
   List<Future<Map<String, dynamic>>> dataFuture = List.empty(growable: true);
 
@@ -100,38 +95,15 @@ class _ScanDataWidget extends State<ScanDataWidget> {
                           cardTitle = snapshot.data?['onix']
                                   ['DescriptiveDetail']['TitleDetail']
                               ['TitleElement']['TitleText']['content'];
-                          cardSubtitle =
-                              '￥${snapshot.data?['onix']['ProductSupply']['SupplyDetail']['Price'][0]['PriceAmount']}';
-
-                          // データベースに保存
-                          // openDatabaseAndInsert(
-                          //   codeValue,
-                          //   cardTitle,
-                          //   int.parse(snapshot.data?['onix']['ProductSupply']
-                          //       ['SupplyDetail']['Price'][0]['PriceAmount']),
-                          // );
+                          cardSubtitle = NumberFormat.simpleCurrency(
+                                  locale: 'ja_JP', name: 'JPY')
+                              .format(int.parse(snapshot.data?['onix']
+                                      ['ProductSupply']['SupplyDetail']['Price']
+                                  [0]['PriceAmount']));
                         }
                         return Card(
                           elevation: 5,
                           margin: const EdgeInsets.all(9),
-                          // child: ListTile(
-                          //   title: Text(
-                          //     cardTitle,
-                          //     style: const TextStyle(
-                          //         fontSize: 23, fontWeight: FontWeight.bold),
-                          //   ),
-                          //   subtitle: Text(
-                          //     cardSubtitle,
-                          //     style:
-                          //         const TextStyle(fontSize: 20, color: Color(0xFF553311)),
-                          //   ),
-                          //   trailing: IconButton(
-                          //     icon: const Icon(Icons.more_vert), // ここに任意のアイコンを設定
-                          //     onPressed: () {
-                          //       // ボタンが押されたときの処理をここに書く
-                          //     },
-                          //   ),
-                          // ),
                           child: SwitchListTile(
                             value: isSwitched[index],
                             onChanged: (isSwitchDisabled)
@@ -161,25 +133,28 @@ class _ScanDataWidget extends State<ScanDataWidget> {
               },
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              widget.scandata?.barcodes.asMap().forEach((index, barcode) {
-                if (isSwitched[index]) {
-                  String isbn = barcode.rawValue!;
-                  String title = '';
-                  int price = 0;
-                  dataFuture[index].then((value) {
-                    title = value['onix']['DescriptiveDetail']['TitleDetail']
-                        ['TitleElement']['TitleText']['content'];
-                    price = int.parse(value['onix']['ProductSupply']
-                        ['SupplyDetail']['Price'][0]['PriceAmount']);
-                    openDatabaseAndInsert(isbn, title, price);
-                  });
-                }
-              });
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
-            child: const Text('最初に戻る'),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                widget.scandata?.barcodes.asMap().forEach((index, barcode) {
+                  if (isSwitched[index]) {
+                    String isbn = barcode.rawValue!;
+                    String title = '';
+                    int price = 0;
+                    dataFuture[index].then((value) {
+                      title = value['onix']['DescriptiveDetail']['TitleDetail']
+                          ['TitleElement']['TitleText']['content'];
+                      price = int.parse(value['onix']['ProductSupply']
+                          ['SupplyDetail']['Price'][0]['PriceAmount']);
+                      openDatabaseAndInsert(isbn, title, price);
+                    });
+                  }
+                });
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              child: const Text('記録してホームへ'),
+            ),
           ),
         ],
       ),
