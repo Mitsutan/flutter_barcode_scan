@@ -153,8 +153,9 @@ class _ScanDataWidget extends State<ScanDataWidget> {
                   }
                 });
                 // Navigator.of(context).popUntil((route) => route.isFirst);
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const MyApp()));
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const MyApp()),
+                    (route) => false);
               },
               child: const Text('記録してホームへ'),
             ),
