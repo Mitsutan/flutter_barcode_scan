@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scan/navigation.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:http/http.dart' as http;
@@ -151,7 +152,9 @@ class _ScanDataWidget extends State<ScanDataWidget> {
                     });
                   }
                 });
-                Navigator.of(context).popUntil((route) => route.isFirst);
+                // Navigator.of(context).popUntil((route) => route.isFirst);
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const MyApp()));
               },
               child: const Text('記録してホームへ'),
             ),
