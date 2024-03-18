@@ -104,12 +104,12 @@ class _ScanDataWidget extends State<ScanDataWidget> {
                               '￥${snapshot.data?['onix']['ProductSupply']['SupplyDetail']['Price'][0]['PriceAmount']}';
 
                           // データベースに保存
-                          openDatabaseAndInsert(
-                            codeValue,
-                            cardTitle,
-                            int.parse(snapshot.data?['onix']['ProductSupply']
-                                ['SupplyDetail']['Price'][0]['PriceAmount']),
-                          );
+                          // openDatabaseAndInsert(
+                          //   codeValue,
+                          //   cardTitle,
+                          //   int.parse(snapshot.data?['onix']['ProductSupply']
+                          //       ['SupplyDetail']['Price'][0]['PriceAmount']),
+                          // );
                         }
                         return Card(
                           elevation: 5,
@@ -163,6 +163,20 @@ class _ScanDataWidget extends State<ScanDataWidget> {
           ),
           ElevatedButton(
             onPressed: () {
+              widget.scandata?.barcodes.asMap().forEach((index, barcode) {
+                if (isSwitched[index]) {
+                  String isbn = barcode.rawValue!;
+                  String title = '';
+                  int price = 0;
+                  dataFuture[index].then((value) {
+                    title = value['onix']['DescriptiveDetail']['TitleDetail']
+                        ['TitleElement']['TitleText']['content'];
+                    price = int.parse(value['onix']['ProductSupply']
+                        ['SupplyDetail']['Price'][0]['PriceAmount']);
+                    openDatabaseAndInsert(isbn, title, price);
+                  });
+                }
+              });
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
             child: const Text('最初に戻る'),
