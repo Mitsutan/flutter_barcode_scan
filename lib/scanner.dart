@@ -12,7 +12,10 @@ class ScannerWidget extends StatefulWidget {
 class _ScannerWidgetState extends State<ScannerWidget>
     with SingleTickerProviderStateMixin {
   // スキャナーの作用を制御するコントローラーのオブジェクト
-  MobileScannerController controller = MobileScannerController();
+  MobileScannerController controller = MobileScannerController(
+    detectionSpeed: DetectionSpeed.noDuplicates,
+    autoStart: true,
+  );
   bool isStarted = true; // カメラがオンしているかどうか
   double zoomFactor = 0.0; // ズームの程度。0から1まで。多いほど近い
 
@@ -34,11 +37,6 @@ class _ScannerWidgetState extends State<ScannerWidget>
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.5,
                 child: MobileScanner(
-                  // controller: MobileScannerController(
-                  // detectionSpeed: DetectionSpeed.noDuplicates,
-                  // autoStart: true,
-
-                  // ),
                   controller: controller,
                   // fit: BoxFit.contain,
                   // QRコードかバーコードが見つかった後すぐ実行する関数
@@ -56,17 +54,19 @@ class _ScannerWidgetState extends State<ScannerWidget>
 
                     controller.stop(); // まずはカメラを止める
 
-                    setState(() {
-                      // 結果を表す画面に切り替える
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            // scandataはスキャンの結果を収める関数であり、これをデータ表示ページに渡す
-                            return ScanDataWidget(scandata: scandata);
-                          },
-                        ),
-                      ).then((value) => controller.start());
+                    // setState(() {
+                    // 結果を表す画面に切り替える
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          // scandataはスキャンの結果を収める関数であり、これをデータ表示ページに渡す
+                          return ScanDataWidget(scandata: scandata);
+                        },
+                      ),
+                    ).then((value) {
+                      controller.start();
                     });
+                    // });
                   },
                 ),
               ),
