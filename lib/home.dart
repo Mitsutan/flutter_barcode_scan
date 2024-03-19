@@ -96,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       return Text(
                         NumberFormat.simpleCurrency(
                                 locale: 'ja_JP', name: 'JPY')
-                            .format(snapshot.data),
+                            .format(snapshot.data ?? 0),
                         style: const TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
